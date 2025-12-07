@@ -109,7 +109,11 @@ export default function ResetPassword() {
     }));
 
     try {
-      const response = await fetch("http://localhost:5228/api/v1/auth/reset-password", {
+      const apiUrl = import.meta.env.PROD 
+        ? "https://tuodominio.com/api/v1/auth/reset-password" // URL produzione
+        : "http://localhost:5228/api/v1/auth/reset-password"; // URL locale
+
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
