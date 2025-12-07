@@ -109,7 +109,7 @@ export default function ResetPassword() {
     }));
 
     try {
-      const response = await fetch("http://localhost:5228/api/v1/auth/reset-password", {
+      const response = await fetch("/api/v1/auth/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
