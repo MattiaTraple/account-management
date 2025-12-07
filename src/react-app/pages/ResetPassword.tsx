@@ -109,6 +109,15 @@ export default function ResetPassword() {
     }));
 
     try {
+      console.log("Tentativo di reset password con:", {
+        url: "http://localhost:5228/api/v1/auth/reset-password",
+        body: {
+          email,
+          token,
+          newPassword: formData.newPassword,
+        },
+      });
+
       const response = await fetch("http://localhost:5228/api/v1/auth/reset-password", {
         method: "POST",
         headers: {
@@ -120,6 +129,8 @@ export default function ResetPassword() {
           newPassword: formData.newPassword,
         }),
       });
+
+      console.log("Risposta API:", response.status, response.statusText);
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
