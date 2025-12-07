@@ -5,12 +5,6 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 export default defineConfig({
 	plugins: [react(), cloudflare()],
 	server: {
-		proxy: {
-			"/api": {
-				target: "http://localhost:5228",
-				changeOrigin: true,
-				secure: false,
-			},
-		},
+		cors: true,
 	},
 });
