@@ -76,9 +76,6 @@ export default function ResetPassword() {
     const email = searchParams.get("email");
     const token = searchParams.get("token");
 
-    // Resetta eventuali errori precedenti
-    setState(prev => ({ ...prev, formError: "" }));
-
     if (!email || !token) {
       setState((prev) => ({
         ...prev,
