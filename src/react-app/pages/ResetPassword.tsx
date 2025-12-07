@@ -109,26 +109,6 @@ export default function ResetPassword() {
     }));
 
     try {
-      // TODO: Sostituire con l'endpoint reale quando disponibile
-      // Per ora simuliamo una chiamata riuscita per testare il frontend
-      console.log("Chiamata API simulata:", {
-        email,
-        token,
-        newPassword: formData.newPassword,
-      });
-
-      // Simula attesa
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Simula successo
-      setState((prev) => ({
-        ...prev,
-        submitting: false,
-        success: true,
-      }));
-      
-      // Quando l'endpoint sarà pronto, decommenta questo codice:
-      /*
       const response = await fetch("/api/v1/auth/reset-password", {
         method: "POST",
         headers: {
@@ -154,7 +134,6 @@ export default function ResetPassword() {
         submitting: false,
         success: true,
       }));
-      */
     } catch (error) {
       const message =
         error instanceof Error
