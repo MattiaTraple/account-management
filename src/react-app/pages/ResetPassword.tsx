@@ -2,84 +2,123 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
 interface ResetPasswordState {
-  loading: boolean;
-  error: string;
+  verifying: boolean;
+  submitting: boolean;
   success: boolean;
-  codeValid: boolean;
+  formError: string;
+  blockingError: string;
 }
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [state, setState] = useState<ResetPasswordState>({
-    loading: true,
-    error: '',
+    verifying: true,
+    submitting: false,
     success: false,
-    codeValid: false
+    formError: "",
+    blockingError: "",
   });
   const [formData, setFormData] = useState({
-    newPassword: '',
-    confirmPassword: ''
+    newPassword: "",
+    confirmPassword: "",
   });
 
   useEffect(() => {
-    const code = searchParams.get('code');
-    
-    if (!code) {
-      setState(prev => ({
+    const email = searchParams.get("email");
+    const token = searchParams.get("token");
+
+    if (!email || !token) {
+      setState((prev) => ({
         ...prev,
-        loading: false,
-        error: 'Codice di reset mancante'
+        verifying: false,
+        blockingError: "Email o token mancanti nel link di reset.",
       }));
       return;
     }
 
-    // Qui chiamerai l'endpoint per validare il codice
-    // Per ora simuliamo una validazione riuscita
-    setTimeout(() => {
-      setState(prev => ({
-        ...prev,
-        loading: false,
-        codeValid: true
-      }));
-    }, 1000);
+    setState((prev) => ({
+      ...prev,
+      verifying: false,
+      blockingError: "",
+    }));
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    const email = searchParams.get("email");
+    const token = searchParams.get("token");
+
+    if (!email || !token) {
+      setState((prev) => ({
+        ...prev,
+        formError: "Link non valido: email o token mancanti.",
+      }));
+      return;
+    }
+
     if (formData.newPassword !== formData.confirmPassword) {
-      setState(prev => ({ ...prev, error: 'Le password non coincidono' }));
+      setState((prev) => ({
+        ...prev,
+        formError: "Le password non coincidono",
+      }));
       return;
     }
 
     if (formData.newPassword.length < 8) {
-      setState(prev => ({ ...prev, error: 'La password deve essere di almeno 8 caratteri' }));
+      setState((prev) => ({
+        ...prev,
+        formError: "La password deve essere di almeno 8 caratteri",
+      }));
       return;
     }
 
-    setState(prev => ({ ...prev, loading: true, error: '' }));
-    
+    setState((prev) => ({
+      ...prev,
+      submitting: true,
+      formError: "",
+    }));
+
     try {
-      // Qui chiamerai l'endpoint per resettare la password
-      // Per ora simuliamo un reset riuscito
-      setTimeout(() => {
-        setState(prev => ({
-          ...prev,
-          loading: false,
-          success: true
-        }));
-      }, 1500);
-    } catch (error) {
-      setState(prev => ({
+      const response = await fetch("/api/v1/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          token,
+          newPassword: formData.newPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(
+          (data as { message?: string }).message ??
+            "Errore durante il reset della password",
+        );
+      }
+
+      setState((prev) => ({
         ...prev,
-        loading: false,
-        error: 'Errore durante il reset della password'
+        submitting: false,
+        success: true,
+      }));
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Errore durante il reset della password";
+      setState((prev) => ({
+        ...prev,
+        submitting: false,
+        formError: message,
       }));
     }
   };
 
-  if (state.loading && !state.codeValid) {
+  if (state.verifying) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -90,7 +129,7 @@ export default function ResetPassword() {
     );
   }
 
-  if (state.error && !state.codeValid) {
+  if (state.blockingError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
@@ -100,10 +139,10 @@ export default function ResetPassword() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Codice Non Valido</h2>
-            <p className="text-gray-600 mb-6">{state.error}</p>
-            <button 
-              onClick={() => navigate('/login')}
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Link Non Valido</h2>
+            <p className="text-gray-600 mb-6">{state.blockingError}</p>
+            <button
+              onClick={() => navigate("/login")}
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
             >
               Torna al Login
@@ -126,8 +165,8 @@ export default function ResetPassword() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Password Reset!</h2>
             <p className="text-gray-600 mb-6">La tua password è stata aggiornata con successo.</p>
-            <button 
-              onClick={() => navigate('/login')}
+            <button
+              onClick={() => navigate("/login")}
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
             >
               Vai al Login
@@ -145,10 +184,10 @@ export default function ResetPassword() {
           <h2 className="text-2xl font-bold text-gray-900">Reset Password</h2>
           <p className="text-gray-600 mt-2">Inserisci la tua nuova password</p>
         </div>
-        
-        {state.error && (
+
+        {state.formError && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-600 text-sm">{state.error}</p>
+            <p className="text-red-600 text-sm">{state.formError}</p>
           </div>
         )}
 
@@ -161,7 +200,7 @@ export default function ResetPassword() {
               type="password"
               id="newPassword"
               value={formData.newPassword}
-              onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, newPassword: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
               minLength={8}
@@ -176,7 +215,7 @@ export default function ResetPassword() {
               type="password"
               id="confirmPassword"
               value={formData.confirmPassword}
-              onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, confirmPassword: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
               minLength={8}
@@ -185,10 +224,10 @@ export default function ResetPassword() {
 
           <button
             type="submit"
-            disabled={state.loading}
+            disabled={state.submitting}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {state.loading ? 'Aggiornamento...' : 'Reset Password'}
+            {state.submitting ? "Aggiornamento..." : "Reset Password"}
           </button>
         </form>
       </div>
