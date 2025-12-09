@@ -110,7 +110,7 @@ export default function ResetPassword() {
 
     try {
       const apiUrl = import.meta.env.PROD 
-        ? "https://https://taskedsocial.it/api/v1/auth/reset-password" // URL produzione
+        ? "https://taskedsocial.it/api/v1/auth/reset-password" // URL produzione
         : "http://localhost:5228/api/v1/auth/reset-password"; // URL locale
 
       const response = await fetch(apiUrl, {
