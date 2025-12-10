@@ -71,6 +71,15 @@ export default function ResetPassword() {
     }));
   }, [searchParams]);
 
+  useEffect(() => {
+    if (state.success) {
+      const timer = setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [state.success, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const email = searchParams.get("email");
@@ -197,13 +206,8 @@ export default function ResetPassword() {
               </svg>
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Password Reset!</h2>
-            <p className="text-gray-600 mb-6">La tua password è stata aggiornata con successo.</p>
-            <button
-              onClick={() => navigate("/login")}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Vai al Login
-            </button>
+            <p className="text-gray-600 mb-2">La tua password è stata aggiornata con successo.</p>
+            <p className="text-sm text-blue-600">Verrai reindirizzato alla pagina di login tra pochi secondi...</p>
           </div>
         </div>
       </div>
