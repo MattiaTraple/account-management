@@ -3,6 +3,7 @@ import EmailConfirmed from './pages/EmailConfirmed';
 import EmailVerificationError from './pages/EmailVerificationError';
 import ResetPassword from './pages/ResetPassword';
 import Policies from './pages/Policies';
+import GenericError from './pages/GenericError';
 import './App.css';
 
 function App() {
@@ -14,8 +15,9 @@ function App() {
           <Route path="/email-verification-error" element={<EmailVerificationError />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/policies" element={<Policies />} />
+          <Route path="/error" element={<GenericError />} />
           <Route path="/" element={<Navigate to="/confirm-email" replace />} />
-          <Route path="*" element={<Navigate to="/confirm-email" replace />} />
+          <Route path="*" element={<GenericError message="Pagina non trovata." />} />
         </Routes>
       </div>
     </Router>

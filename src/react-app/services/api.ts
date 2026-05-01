@@ -18,12 +18,14 @@ export const apiService = {
         'Content-Type': 'application/json',
       },
     });
-    
-    if (!response.ok) {
-      throw new Error('Errore durante la conferma dell\'email');
+
+    const data = await response.json().catch(() => ({})) as { success?: boolean; message?: string };
+
+    if (!response.ok || data.success === false) {
+      throw new Error(data.message ?? 'Errore durante la conferma dell\'email');
     }
-    
-    return response.json();
+
+    return data;
   },
 
   async validateResetCode(code: string) {
