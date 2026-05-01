@@ -183,12 +183,7 @@ export default function ResetPassword() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Link Non Valido</h2>
             <p className="text-gray-600 mb-6">{state.blockingError}</p>
-            <button
-              onClick={() => navigate("/login")}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Torna al Login
-            </button>
+
           </div>
         </div>
       </div>
