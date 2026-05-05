@@ -17,8 +17,8 @@ export default function GenericError({ message }: { message?: string }) {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-800">
               Se il problema persiste, contatta il supporto all'indirizzo{" "}
-              <a href="mailto:tasked.business@gmail.com" className="font-semibold underline">
-                tasked.business@gmail.com
+              <a href="mailto:tasked.feedback@gmail.com" className="font-semibold underline">
+                tasked.feedback@gmail.com
               </a>
             </p>
           </div>
