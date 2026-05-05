@@ -1,8 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-
 export default function EmailVerificationError() {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">

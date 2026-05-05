@@ -24,7 +24,7 @@ export default function EmailConfirmed() {
 
     if (token) {
       // Navigazione diretta: il browser segue il redirect 302 del backend
-      window.location.replace(`/api/auth/verify-email?token=${encodeURIComponent(token)}`);
+      window.location.replace(`https://taskedsocial.it/api/v1/auth/verify-email?token=${encodeURIComponent(token)}`);
       return;
     }
 
