@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiService } from '../services/api';
 
 type ConfirmStatus = 'loading' | 'verified' | 'already-verified';
 
@@ -24,9 +23,8 @@ export default function EmailConfirmed() {
     }
 
     if (token) {
-      apiService.confirmEmail(token)
-        .then(() => navigate('/confirm-email?status=verified', { replace: true }))
-        .catch(() => navigate('/email-verification-error', { replace: true }));
+      // Navigazione diretta: il browser segue il redirect 302 del backend
+      window.location.replace(`/api/auth/verify-email?token=${encodeURIComponent(token)}`);
       return;
     }
 
